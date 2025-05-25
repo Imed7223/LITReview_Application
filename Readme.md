@@ -24,7 +24,7 @@ LITRevu est une application web développée avec Django permettant à une commu
 ## 🧱 Structure du projet
 
 litrevu/
-├── accounts/ # Gestion des utilisateurs personnalisés
+├── authenticate/ # Gestion des utilisateurs personnalisés
 ├── reviews/ # Logiciel métier (billets, critiques, abonnements)
 ├── templates/ # Fichiers HTML (avec includes)
 │ ├── registration/ # Login / Signup
