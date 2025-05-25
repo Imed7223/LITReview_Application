@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Confirmer la suppression</h2>
+<p>Êtes-vous sûr de vouloir supprimer "{{ object }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirmer</button>
+   <a href="{% url 'dashboard' %}">Annuler</a>
+</form>
+{% endblock %}

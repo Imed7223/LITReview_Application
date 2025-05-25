@@ -1,0 +1,9 @@
+<div class="review">
+    <a href="{% url 'dashboard' %}"> dashboard</a>
+    <h3>{{ post.headline }} ({{ post.rating }}/5)</h3>
+    <p>{{ post.body }}</p>
+    <p><strong>Critique postée par :</strong> {{ post.user.username }} - {{ post.time_created|date:"d/m/Y H:i" }}</p>
+    {% if post.ticket %}
+        <p><em>Concernant : {{ post.ticket.title }}</em></p>
+    {% endif %}
+</div>

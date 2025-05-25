@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-danger p-4 rounded shadow">
+        <h2 class="mb-3">Supprimer la critique</h2>
+        <p>⚠️ Vous êtes sur le point de supprimer définitivement cette critique :</p>
+
+        <div class="border p-3 bg-light my-3">
+            <h5>{{ review.headline }}</h5>
+            <p>{{ review.body }}</p>
+            <small class="text-muted">Note : {{ review.rating }}/5 - Posté le {{ review.time_created|date:"d/m/Y H:i" }}</small>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

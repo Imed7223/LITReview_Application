@@ -1,0 +1,13 @@
+{% extends 'authentication/base.html' %}
+{% block content %}
+<div class="text-end">
+    <p>{{ message }}</p>
+
+    <form method="POST">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <button type="submit"  class="btn btn-success btn-sm">Se connecter</button>
+    </form>
+</div>
+{% endblock %}
+

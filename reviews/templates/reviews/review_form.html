@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'dashboard' %}"> dashboard</a>
+<h2>Publier une critique</h2>
+{% if ticket %}
+    <p><strong>Ticket :</strong> {{ ticket.title }}</p>
+    <p>{{ ticket.description }}</p>
+{% else %}
+    <h3>Créer un billet en même temps</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ ticket_form.as_p }}
+        <hr>
+        {{ review_form.as_p }}
+        <button type="submit">Créer le billet et la critique</button>
+    </form>
+{% endif %}
+{% if ticket %}
+<form method="post">
+    {% csrf_token %}
+    {{ review_form.as_p }}
+    <button type="submit">Publier la critique</button>
+</form>
+{% endif %}
+{% endblock %}

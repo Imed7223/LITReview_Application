@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'dashboard' %}"> dashboard</a>
+<h2>Modifier le billet</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer</button>
+</form>
+{% endblock %}

@@ -1,0 +1,40 @@
+.rating {
+    color: gold;
+    font-size: 1.2em;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    font-weight: bold;
+}
+#container {
+margin: 3px 3px 3px 3px;
+}
+button:focus, a:focus, input:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+ h1.text-start {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .header-box h1 {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+
+        .text-end {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #6610f2;
+            border-color: #6610f2;
+        }
