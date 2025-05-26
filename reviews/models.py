@@ -13,6 +13,7 @@ class Ticket(models.Model):
     def __str__(self):
         return self.title
 
+
 class Review(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(
@@ -25,6 +26,7 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.headline} - {self.rating}/5"
+
 
 class UserFollows(models.Model):
     user = models.ForeignKey(
@@ -43,5 +45,3 @@ class UserFollows(models.Model):
 
     def __str__(self):
         return f"{self.user.username} suit {self.followed_user.username}"
-
-

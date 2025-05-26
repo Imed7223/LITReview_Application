@@ -1,13 +1,13 @@
 from django.conf import settings
-from django.contrib.auth import  login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from . import forms
+
 
 def logout_user(request):
     logout(request)
     return redirect('login')
+
 
 def login_page(request):
     form = forms.LoginForm()
@@ -26,6 +26,7 @@ def login_page(request):
                 message = 'Identifiants invalides.'
     return render(
         request, 'authentication/login.html', context={'form': form, 'message': message})
+
 
 def signup_page(request):
     form = forms.SignupForm()
