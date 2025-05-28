@@ -9,11 +9,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-4">
+    <div class="message-box">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
+                <div class="alert alert-{{ message.tags }} fw-bold" role="alert"> 
+                   <h2 class="btn btn-arning" style="color:red"> ⚠{{ message }}</h2>
                 </div>
             {% endfor %}
         {% endif %}

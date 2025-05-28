@@ -117,11 +117,28 @@ def follow_user(request):
             followed_user = User.objects.get(username=username)
             if followed_user == request.user:
                 error_message = "Vous ne pouvez pas vous suivre vous-même."
+
             else:
-                UserFollows.objects.get_or_create(
+                # Vérifie si la relation existe déjà
+                already_following = UserFollows.objects.filter(
                     user=request.user, followed_user=followed_user
-                )
-                return redirect('subscriptions')
+                ).exists()
+
+                if already_following:
+                    messages.info(
+                        request,
+                        f"Vous suivez déjà {followed_user.username}."
+                    )    
+                else:
+                    UserFollows.objects.get_or_create(
+                        user=request.user, followed_user=followed_user
+                    )
+                    messages.success(
+                        request,
+                        f"Vous suivez {followed_user.username}"
+                    )
+
+                return redirect('dashboard')
         except User.DoesNotExist:
             error_message = "L'utilisateur n'existe pas."
 
@@ -202,7 +219,7 @@ def unfollow_user(request, follow_id):
             request,
             f"Vous ne suivez plus {follow.followed_user.username}"
         )
-        return redirect('subscriptions')
+        return redirect('dashboard')
 
     return render(request, 'reviews/confirm_unfollow.html', {'follow': follow})
 

@@ -33,6 +33,8 @@ Si tu utilises {{ form.as_p }}, Django ajoute déjà les labels automatiquement
 8. Langue de la page
 dans base.html rajoute:<html lang="fr">
 
+base.html <div class="container mt-4">
+
 
 
 

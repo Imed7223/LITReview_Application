@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<a href="{% url 'dashboard' %}"> dashboard</a>
+<a href="{% url 'dashboard' %}"><--dashboard</a>
 <h2>Abonnements</h2>
 
 <h3>Suivre un nouvel utilisateur</h3>
@@ -10,24 +10,5 @@
     <button type="submit">Suivre</button>
 </form>
 
-<h3>Utilisateurs suivis</h3>
-<ul>
-    {% for follow in follows %}
-    <li>
-        {{ follow.followed_user.username }}
-        <a href="{% url 'unfollow_user' follow.id %}" class="btn btn-sm btn-danger">Se désabonner</a>
-    </li>
-    {% empty %}
-    <li>Vous ne suivez personne pour le moment.</li>
-    {% endfor %}
-</ul>
 
-<h3>Abonnés</h3>
-<ul>
-    {% for follower in request.user.followed_by.all %}
-    <li>{{ follower.user.username }}</li>
-    {% empty %}
-    <li>Personne ne vous suit pour le moment.</li>
-    {% endfor %}
-</ul>
 {% endblock %}
