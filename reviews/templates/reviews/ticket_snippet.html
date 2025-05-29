@@ -1,9 +1,0 @@
-<div class="ticket">
-    <a href="{% url 'dashboard' %}"> dashboard</a>
-    <h3>{{ post.title }}</h3>
-    <p>{{ post.description }}</p>
-    {% if post.image %}
-        <img src="{{ post.image.url }}" alt="Image associée au ticket" width="150">
-    {% endif %}
-    <p><strong>Posté par :</strong> {{ post.user.username }} - {{ post.time_created|date:"d/m/Y H:i" }}</p>
-</div>
