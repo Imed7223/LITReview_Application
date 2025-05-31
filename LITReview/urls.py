@@ -42,6 +42,10 @@ urlpatterns = [
     path('user_follow_list/', reviews.views.user_follow_list, name='user_follow_list'),
     path('review/<int:review_id>/edit/', reviews.views.edit_review, name='edit_review'),
     path('review/<int:review_id>/delete/', reviews.views.delete_review, name='delete_review'),
+    path('users/', reviews.views.user_list, name='user_list'),
+    path('users/<int:user_id>/block/', reviews.views.block_user, name='block_user'),
+    path('users/<int:user_id>/unblock/', reviews.views.unblock_user, name='unblock_user'),
+
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

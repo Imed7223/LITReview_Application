@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'dashboard' %}"> dashboard</a>
+<h1>Liste des utilisateurs</h1>
+
+<table>
+    <tr>
+        <th>Nom d’utilisateur</th>
+        <th>Statut</th>
+        <th>Action</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.username }}</td>
+        <td>
+            {% if user.is_active %}
+                Actif
+            {% else %}
+                Bloqué
+            {% endif %}
+        </td>
+        <td>
+            {% if user.is_active %}
+                <a href="{% url 'block_user' user.id %}">Bloquer</a>
+            {% else %}
+                <a href="{% url 'unblock_user' user.id %}">Débloquer</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -82,8 +82,8 @@ LITReview_Application/
 ### 1. Cloner le dépôt
 
 ```bash
-git clone https://github.com/votre-utilisateur/LITReview_Application.git
-cd litrevu
+git clone https://github.com/Imed7223/LITReview_Application.git
+cd LITReview_Application
 
 2. Créer et activer un environnement virtuel
 python -m venv env

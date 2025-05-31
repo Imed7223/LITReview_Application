@@ -122,14 +122,14 @@ def follow_user(request):
                 # Vérifie si la relation existe déjà
                 already_following = UserFollows.objects.filter(
                     user=request.user, followed_user=followed_user
-                ).exists()
-
+                    ).exists()
                 if already_following:
                     messages.info(
                         request,
                         f"Vous suivez déjà {followed_user.username}."
-                    )    
+                    )
                 else:
+
                     UserFollows.objects.get_or_create(
                         user=request.user, followed_user=followed_user
                     )
@@ -258,3 +258,35 @@ def delete_review(request, review_id):
 def user_follow_list(request):
     follows = UserFollows.objects.all()
     return render(request, 'reviews/user_follow_list.html', {'follows': follows})
+
+
+@login_required
+def block_user(request, user_id):
+    User=get_user_model()
+    user_to_block = get_object_or_404(User, id=user_id)
+
+    # Vérifie que ce n'est pas l'utilisateur actuel
+    if user_to_block == request.user:
+        messages.error(request, "Vous ne pouvez pas vous bloquer vous-même.")
+        return redirect('user_list')
+
+    user_to_block.is_active = False
+    user_to_block.save()
+    messages.success(request, f"L'utilisateur {user_to_block.username} a été bloqué.")
+    return redirect('user_list')  # Redirige vers la liste des utilisateurs
+
+@login_required
+def unblock_user(request, user_id):
+    User=get_user_model()
+    user_to_unblock = get_object_or_404(User, id=user_id)
+    user_to_unblock.is_active = True
+    user_to_unblock.save()
+    messages.success(request, f"L'utilisateur {user_to_unblock.username} a été débloqué.")
+    return redirect('user_list')
+
+
+@login_required
+def user_list(request):
+    User=get_user_model()
+    users = User.objects.exclude(id=request.user.id)  # On exclut l'utilisateur connecté
+    return render(request, 'reviews/user_list.html', {'users': users}) 
