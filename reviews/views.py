@@ -12,8 +12,8 @@ User = get_user_model()
 
 
 @login_required
-def inscription_message(request):
-    return render(request, 'reviews/inscription_message.html')
+def confirm_subscriptions(request):
+    return render(request, 'reviews/confirm_subscriptions.html')
 
 
 @login_required
