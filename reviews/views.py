@@ -8,6 +8,8 @@ from .forms import TicketForm, ReviewForm
 from .models import Ticket, Review, UserFollows
 from .models import BlockedUser
 
+User = get_user_model()
+
 
 @login_required
 def inscription_message(request):
@@ -16,11 +18,9 @@ def inscription_message(request):
 
 @login_required
 def dashboard(request):
-    
     tickets = Ticket.objects.filter(user=request.user)
     reviews = Review.objects.filter(user=request.user)
     follows = UserFollows.objects.filter(user=request.user)
-
     followed_users = request.user.following.values_list(
         'followed_user', flat=True
     )
@@ -47,26 +47,17 @@ def dashboard(request):
         reverse=True
     )
     user = request.user
-
-    
     # utilisateurs que tu suis
     followed_users = UserFollows.objects.filter(user=user)
-
     # utilisateurs qui te suivent
     followers = UserFollows.objects.filter(followed_user=user)
-
     # utilisateurs que tu as bloqués
     blocked_users = BlockedUser.objects.filter(blocker=user)
     blocked_ids = blocked_users.values_list('blocked__id', flat=True)
-
     # utilisateurs qui t’ont bloqué
     blocked_by_others = BlockedUser.objects.filter(blocked=user)
-
     # on filtre pour ne pas afficher ceux que tu as déjà bloqués
     followers_not_blocked = followers.exclude(user__id__in=blocked_ids)
-    #passer la liste des IDs bloqués
-    blocked_user_ids = BlockedUser.objects.filter(blocker=request.user).values_list('blocked__id', flat=True)
-
     return render(request, 'reviews/dashboard.html', {
         'tickets': tickets,
         'reviews': reviews,
@@ -139,8 +130,6 @@ def follow_user(request):
     error_message = None
     if request.method == 'POST':
         username = request.POST.get('username')
-        User = get_user_model()
-
         try:
             followed_user = User.objects.get(username=username)
             if followed_user == request.user:
@@ -175,7 +164,6 @@ def follow_user(request):
     return render(
         request, 'reviews/follow_user.html', {'error_message': error_message}
     )
-
 
 
 @login_required
@@ -243,7 +231,6 @@ def delete_ticket(request, ticket_id):
 @login_required
 def unfollow_user(request, follow_id):
     follow = get_object_or_404(UserFollows, id=follow_id, user=request.user)
-
     if request.method == 'POST':
         follow.delete()
         messages.success(
@@ -274,7 +261,6 @@ def edit_review(request, review_id):
 @login_required
 def delete_review(request, review_id):
     review = get_object_or_404(Review, id=review_id, user=request.user)
-
     if request.method == 'POST':
         review.delete()
         messages.success(request, "Votre critique a été supprimée !")
@@ -293,7 +279,6 @@ def user_follow_list(request):
 
 @login_required
 def block_user(request, user_id):
-    User = get_user_model()
     blocked_user = get_object_or_404(User, id=user_id)
     # Empêche de bloquer soi-même
     if blocked_user == request.user:
@@ -302,24 +287,13 @@ def block_user(request, user_id):
     BlockedUser.objects.get_or_create(blocker=request.user, blocked=blocked_user)
     # Supprimer la relation de suivi si elle existe
     UserFollows.objects.filter(user=request.user, followed_user=blocked_user).delete()
-    messages.success(request, f"Vous avez débloqué l'utilisateur {blocked_user.username} !")
+    messages.success(request, f"Vous avez bloqué l'utilisateur {blocked_user.username} !")
     return redirect('dashboard')
 
+
+@login_required
 def unblock_user(request, user_id):
-    User = get_user_model()
     user_to_unblock = User.objects.get(id=user_id)
     BlockedUser.objects.filter(blocker=request.user, blocked=user_to_unblock).delete()
     messages.success(request, f"Vous avez débloqué l'utilisateur {user_to_unblock.username} !")
-
     return redirect('dashboard')
-
-@login_required
-def user_list(request):
-    User = get_user_model()
-    users = User.objects.exclude(id=request.user.id)
-    # Récupère les ID des utilisateurs que request.user a bloqués
-    blocked_user_ids = request.user.blocked_users.values_list('blocked_id', flat=True)
-    return render(request, 'reviews/dashboard.html', {
-        'user_list': users,
-        'blocked_user_ids': blocked_user_ids,
-    })

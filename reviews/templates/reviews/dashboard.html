@@ -131,54 +131,83 @@
         </div>
         {% for follower in request.user.followed_by.all %}
         <li>{{ follower.user.username }}</li>
+        {% empty %}
+                <p>Personne ne te suit pour l’instant.</p>
          {% endfor %}
          </div>
          <a href="{% url 'user_follow_list' %}" class="btn btn-outline-primary mt-3">Voir qui suit qui</a>
     
-         <h3>Tu suis :</h3>
-<ul>
-    {% for relation in followed_users %}
-        <li>
-            {{ relation.followed_user.username }}
-            | <a href="{% url 'block_user' relation.followed_user.id %}">Bloquer</a>
-        </li>
-    {% empty %}
-        <li>Tu ne suis personne pour l’instant.</li>
-    {% endfor %}
-</ul>
+    <!-- Section bloquage et débloquage -->
+         <div class="container my-4">
 
-<h3>Ils te suivent :</h3>
-<ul>
-    {% for relation in followers %}
-        <li>
-            {{ relation.user.username }}
-            | <a href="{% url 'block_user' relation.user.id %}">Bloquer</a>
-        </li>
-    {% empty %}
-        <li>Personne ne te suit pour l’instant.</li>
-    {% endfor %}
-</ul>
+    <!-- Utilisateurs suivis -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Tu suis :</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for relation in followed_users %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ relation.followed_user.username }}
+                    <a href="{% url 'block_user' relation.followed_user.id %}" class="btn btn-sm btn-danger">Bloquer</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">Tu ne suis personne pour l’instant.</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-<h3>Tu as bloqué :</h3>
-<ul>
-    {% for block in blocked_users %}
-        <li>
-            {{ block.blocked.username }}
-            | <a href="{% url 'unblock_user' block.blocked.id %}">Débloquer</a>
-        </li>
-    {% empty %}
-        <li>Tu n’as bloqué personne.</li>
-    {% endfor %}
-</ul>
+    <!-- Utilisateurs qui te suivent -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Ils te suivent :</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for relation in followers %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ relation.user.username }}
+                    <a href="{% url 'block_user' relation.user.id %}" class="btn btn-sm btn-danger">Bloquer</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">Personne ne te suit pour l’instant.</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-<h3>Ils t’ont bloqué :</h3>
-<ul>
-    {% for block in blocked_by_others %}
-        <li>{{ block.blocker.username }}</li>
-    {% empty %}
-        <li>Personne ne t’a bloqué.</li>
-    {% endfor %}
-</ul>
+    <!-- Utilisateurs bloqués -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Tu as bloqué :</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for block in blocked_users %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ block.blocked.username }}
+                    <a href="{% url 'unblock_user' block.blocked.id %}" class="btn btn-sm btn-secondary">Débloquer</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">Tu n’as bloqué personne.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Utilisateurs qui t'ont bloqué -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Ils t’ont bloqué :</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for block in blocked_by_others %}
+                <li class="list-group-item">
+                    {{ block.blocker.username }}
+                </li>
+            {% empty %}
+                <li class="list-group-item">Personne ne t’a bloqué.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
 
     </div>
 

@@ -50,7 +50,6 @@ LITReview_Application/
 │       ├── review_form.html
 │       ├── follow_user.html
 │       ├── subscriptions.html       
-        ├── user_list.html
 │       └── user_follow_list.html
 ├── templates/                  # Dossier global de templates
 │   └── base.html               # Template de base avec layout global
@@ -87,7 +86,7 @@ cd LITReview_Application
 2. Créer et activer un environnement virtuel
 python -m venv env
 # Windows
-env\\Scripts\\activate
+env\Scripts\activate
 # macOS/Linux
 source env/bin/activate
 3. Installer les 
@@ -97,8 +96,7 @@ pip freeze > requirements.txt
 
  Lancer l'application en local
  python manage.py migrate
-python manage.py createsuperuser  # si tu veux accéder à /admin
+python manage.py createsuperuser  #(optionnel, si tu veux accéder à /admin)
 python manage.py runserver
 Puis va sur : http://127.0.0.1:8000
 
-Accès à l'administration Django
