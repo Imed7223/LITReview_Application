@@ -6,6 +6,7 @@ from django.db.models import Q, Value, CharField
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import TicketForm, ReviewForm
 from .models import Ticket, Review, UserFollows
+from .models import BlockedUser
 
 
 @login_required
@@ -15,6 +16,7 @@ def inscription_message(request):
 
 @login_required
 def dashboard(request):
+    
     tickets = Ticket.objects.filter(user=request.user)
     reviews = Review.objects.filter(user=request.user)
     follows = UserFollows.objects.filter(user=request.user)
@@ -44,12 +46,36 @@ def dashboard(request):
         key=lambda post: post.time_created,
         reverse=True
     )
+    user = request.user
+
+    
+    # utilisateurs que tu suis
+    followed_users = UserFollows.objects.filter(user=user)
+
+    # utilisateurs qui te suivent
+    followers = UserFollows.objects.filter(followed_user=user)
+
+    # utilisateurs que tu as bloqués
+    blocked_users = BlockedUser.objects.filter(blocker=user)
+    blocked_ids = blocked_users.values_list('blocked__id', flat=True)
+
+    # utilisateurs qui t’ont bloqué
+    blocked_by_others = BlockedUser.objects.filter(blocked=user)
+
+    # on filtre pour ne pas afficher ceux que tu as déjà bloqués
+    followers_not_blocked = followers.exclude(user__id__in=blocked_ids)
+    #passer la liste des IDs bloqués
+    blocked_user_ids = BlockedUser.objects.filter(blocker=request.user).values_list('blocked__id', flat=True)
 
     return render(request, 'reviews/dashboard.html', {
         'tickets': tickets,
         'reviews': reviews,
         'follows': follows,
-        'posts': posts
+        'posts': posts,
+        'followed_users': followed_users,
+        'followers': followers_not_blocked,
+        'blocked_users': blocked_users,
+        'blocked_by_others': blocked_by_others
     })
 
 
@@ -61,6 +87,7 @@ def create_ticket(request):
             ticket = form.save(commit=False)
             ticket.user = request.user
             ticket.save()
+            messages.success(request, "Votre billet a été publié !")
             return redirect('dashboard')
     else:
         form = TicketForm()
@@ -94,6 +121,7 @@ def create_review(request, ticket_id=None):
             review.ticket = ticket
             review.user = request.user
             review.save()
+            messages.success(request, "Votre critique a été publié !")
             return redirect('dashboard')
     else:
         review_form = ReviewForm()
@@ -117,19 +145,21 @@ def follow_user(request):
             followed_user = User.objects.get(username=username)
             if followed_user == request.user:
                 error_message = "Vous ne pouvez pas vous suivre vous-même."
-
+            elif BlockedUser.objects.filter(blocker=followed_user, blocked=request.user).exists():
+                error_message = f"{followed_user.username} vous a bloqué. Vous ne pouvez pas le suivre."
+            elif BlockedUser.objects.filter(blocker=request.user, blocked=followed_user).exists():
+                error_message = f"Vous avez bloqué {followed_user.username}. Débloquez-le avant de le suivre."
             else:
-                # Vérifie si la relation existe déjà
                 already_following = UserFollows.objects.filter(
                     user=request.user, followed_user=followed_user
-                    ).exists()
+                ).exists()
+
                 if already_following:
                     messages.info(
                         request,
                         f"Vous suivez déjà {followed_user.username}."
                     )
                 else:
-
                     UserFollows.objects.get_or_create(
                         user=request.user, followed_user=followed_user
                     )
@@ -145,6 +175,7 @@ def follow_user(request):
     return render(
         request, 'reviews/follow_user.html', {'error_message': error_message}
     )
+
 
 
 @login_required
@@ -262,31 +293,33 @@ def user_follow_list(request):
 
 @login_required
 def block_user(request, user_id):
-    User=get_user_model()
-    user_to_block = get_object_or_404(User, id=user_id)
+    User = get_user_model()
+    blocked_user = get_object_or_404(User, id=user_id)
+    # Empêche de bloquer soi-même
+    if blocked_user == request.user:
+        return redirect('dashboard')
+    # Crée la relation de blocage si elle n’existe pas
+    BlockedUser.objects.get_or_create(blocker=request.user, blocked=blocked_user)
+    # Supprimer la relation de suivi si elle existe
+    UserFollows.objects.filter(user=request.user, followed_user=blocked_user).delete()
+    messages.success(request, f"Vous avez débloqué l'utilisateur {blocked_user.username} !")
+    return redirect('dashboard')
 
-    # Vérifie que ce n'est pas l'utilisateur actuel
-    if user_to_block == request.user:
-        messages.error(request, "Vous ne pouvez pas vous bloquer vous-même.")
-        return redirect('user_list')
-
-    user_to_block.is_active = False
-    user_to_block.save()
-    messages.success(request, f"L'utilisateur {user_to_block.username} a été bloqué.")
-    return redirect('user_list')  # Redirige vers la liste des utilisateurs
-
-@login_required
 def unblock_user(request, user_id):
-    User=get_user_model()
-    user_to_unblock = get_object_or_404(User, id=user_id)
-    user_to_unblock.is_active = True
-    user_to_unblock.save()
-    messages.success(request, f"L'utilisateur {user_to_unblock.username} a été débloqué.")
-    return redirect('user_list')
+    User = get_user_model()
+    user_to_unblock = User.objects.get(id=user_id)
+    BlockedUser.objects.filter(blocker=request.user, blocked=user_to_unblock).delete()
+    messages.success(request, f"Vous avez débloqué l'utilisateur {user_to_unblock.username} !")
 
+    return redirect('dashboard')
 
 @login_required
 def user_list(request):
-    User=get_user_model()
-    users = User.objects.exclude(id=request.user.id)  # On exclut l'utilisateur connecté
-    return render(request, 'reviews/user_list.html', {'users': users}) 
+    User = get_user_model()
+    users = User.objects.exclude(id=request.user.id)
+    # Récupère les ID des utilisateurs que request.user a bloqués
+    blocked_user_ids = request.user.blocked_users.values_list('blocked_id', flat=True)
+    return render(request, 'reviews/dashboard.html', {
+        'user_list': users,
+        'blocked_user_ids': blocked_user_ids,
+    })

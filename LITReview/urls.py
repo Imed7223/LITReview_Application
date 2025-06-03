@@ -46,6 +46,5 @@ urlpatterns = [
     path('users/<int:user_id>/block/', reviews.views.block_user, name='block_user'),
     path('users/<int:user_id>/unblock/', reviews.views.unblock_user, name='unblock_user'),
 
-
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

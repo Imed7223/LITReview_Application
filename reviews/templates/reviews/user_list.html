@@ -1,32 +1,35 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <a href="{% url 'dashboard' %}"> dashboard</a>
-<h1>Liste des utilisateurs</h1>
+  {% for user in user_list %}
+    <p>{{ user.username }}</p>
 
-<table>
-    <tr>
-        <th>Nom d’utilisateur</th>
-        <th>Statut</th>
-        <th>Action</th>
-    </tr>
-    {% for user in users %}
-    <tr>
-        <td>{{ user.username }}</td>
-        <td>
-            {% if user.is_active %}
-                Actif
-            {% else %}
-                Bloqué
-            {% endif %}
-        </td>
-        <td>
-            {% if user.is_active %}
-                <a href="{% url 'block_user' user.id %}">Bloquer</a>
-            {% else %}
-                <a href="{% url 'unblock_user' user.id %}">Débloquer</a>
-            {% endif %}
-        </td>
-    </tr>
+     | <a href="{% url 'block_user' relation.followed_user.id %}">Bloquer</a>
+        </li>
+    {% empty %}
+        <li>Tu ne suis personne pour l’instant.</li>
     {% endfor %}
-</table>
+</ul>
+
+<h3>Ils te suivent :</h3>
+<ul>
+    {% for relation in followers %}
+        <li>{{ relation.user.username }}</li>
+    {% empty %}
+        <li>Personne ne te suit pour l’instant.</li>
+    {% endfor %}
+</ul>
+
+<h3>Tu as bloqué :</h3>
+<ul>
+    {% for block in blocked_users %}
+        <li>
+            {{ block.blocked.username }}
+            | <a href="{% url 'unblock_user' block.blocked.id %}">Débloquer</a>
+        </li>
+    {% empty %}
+        <li>Tu n’as bloqué personne.</li>
+    {% endfor %}
 {% endblock %}
+

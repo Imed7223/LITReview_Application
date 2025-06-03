@@ -134,8 +134,52 @@
          {% endfor %}
          </div>
          <a href="{% url 'user_follow_list' %}" class="btn btn-outline-primary mt-3">Voir qui suit qui</a>
-         <a href="{% url 'user_list' %}">Bloquer cet utilisateur</a>
-         
+    
+         <h3>Tu suis :</h3>
+<ul>
+    {% for relation in followed_users %}
+        <li>
+            {{ relation.followed_user.username }}
+            | <a href="{% url 'block_user' relation.followed_user.id %}">Bloquer</a>
+        </li>
+    {% empty %}
+        <li>Tu ne suis personne pour l’instant.</li>
+    {% endfor %}
+</ul>
+
+<h3>Ils te suivent :</h3>
+<ul>
+    {% for relation in followers %}
+        <li>
+            {{ relation.user.username }}
+            | <a href="{% url 'block_user' relation.user.id %}">Bloquer</a>
+        </li>
+    {% empty %}
+        <li>Personne ne te suit pour l’instant.</li>
+    {% endfor %}
+</ul>
+
+<h3>Tu as bloqué :</h3>
+<ul>
+    {% for block in blocked_users %}
+        <li>
+            {{ block.blocked.username }}
+            | <a href="{% url 'unblock_user' block.blocked.id %}">Débloquer</a>
+        </li>
+    {% empty %}
+        <li>Tu n’as bloqué personne.</li>
+    {% endfor %}
+</ul>
+
+<h3>Ils t’ont bloqué :</h3>
+<ul>
+    {% for block in blocked_by_others %}
+        <li>{{ block.blocker.username }}</li>
+    {% empty %}
+        <li>Personne ne t’a bloqué.</li>
+    {% endfor %}
+</ul>
+
     </div>
 
     <!-- Section Flux -->

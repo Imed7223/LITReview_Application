@@ -40,7 +40,7 @@ LITReview_Application/
 │   └── templates/reviews/      # Templates pour le flux, formulaires, et dashboard
 │       ├── base.html
 │       ├── dashboard.html
-│       ├── ticket_form.html
+│       ├── ticket_form.html       
         ├── inscription_message.html
 │       ├──edit_ ticket.html
 │       ├── delete_review_confirm.html
@@ -49,9 +49,8 @@ LITReview_Application/
 │       ├── confirm_delete.html
 │       ├── review_form.html
 │       ├── follow_user.html
-│       ├── subscriptions.html
-│       ├── ticket_snippet.html
-        ├── review_snippet.html
+│       ├── subscriptions.html       
+        ├── user_list.html
 │       └── user_follow_list.html
 ├── templates/                  # Dossier global de templates
 │   └── base.html               # Template de base avec layout global
